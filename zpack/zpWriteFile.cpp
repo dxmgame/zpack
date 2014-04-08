@@ -87,7 +87,7 @@ u32 WriteFile::write(const u8* buffer, u32 size)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void WriteFile::seekInPackage()
 {
-	_fseeki64(m_package->m_stream, m_offset + m_writePos, SEEK_SET);
+	fseek(m_package->m_stream, m_offset + m_writePos, SEEK_SET);
 	m_package->m_lastSeekFile = this;
 }
 

@@ -1,7 +1,7 @@
 #include "zpCompressedFile.h"
 #include "zpPackage.h"
 #include <cassert>
-#include "zlib.h"
+#include "zpack/zlib/zlib.h"
 //#include "PerfUtil.h"
 
 namespace zp
@@ -336,7 +336,7 @@ bool CompressedFile::readChunk(u32 chunkIndex, u32 offset, u32 readSize, u8* buf
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void CompressedFile::seekInPackage(u32 offset)
 {
-	_fseeki64(m_package->m_stream, m_offset + offset, SEEK_SET);
+	fseek(m_package->m_stream, m_offset + offset, SEEK_SET);
 	m_package->m_lastSeekFile = this;
 }
 

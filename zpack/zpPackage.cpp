@@ -3,7 +3,7 @@
 #include "zpCompressedFile.h"
 #include "zpWriteFile.h"
 #include "WriteCompressFile.h"
-#include "zlib.h"
+#include "zpack/zlib/zlib.h"
 #include <cassert>
 #include <sstream>
 
@@ -37,10 +37,8 @@ Package::Package(const Char* filename, bool readonly, bool readFilename)
 	, m_lastSeekFile(NULL)
 	, m_dirty(false)
 {
-#ifdef _ZP_WIN32_THREAD_SAFE
-	::InitializeCriticalSection(&m_cs);
-#endif
 
+	pthread_mutex_init(&mutex_, NULL);
 	//require filename to modify package
 	if (!readFilename && !readonly)
 	{
@@ -95,9 +93,8 @@ Package::~Package()
 		flush();
 		fclose(m_stream);
 	}
-#ifdef _ZP_WIN32_THREAD_SAFE
-	::DeleteCriticalSection(&m_cs);
-#endif
+
+	pthread_mutex_destroy(&mutex_);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +184,7 @@ bool Package::getFileInfo(u32 index, Char* filenameBuffer, u32 filenameBufferSiz
 	}
 	if (filenameBuffer != NULL)
 	{
-		Strcpy(filenameBuffer, filenameBufferSize, m_filenames[index].c_str());
+		strcpy(filenameBuffer, m_filenames[index].c_str());
 		filenameBuffer[filenameBufferSize - 1] = 0;
 	}
 	const FileEntry& entry = getFileEntry(index);
@@ -442,7 +439,7 @@ void Package::flush()
 	writeTables(true);
 
 	//header
-	_fseeki64(m_stream, 0, SEEK_SET);
+	fseek(m_stream, 0, SEEK_SET);
 	fwrite(&m_header, sizeof(m_header), 1, m_stream);
 
 	fflush(m_stream);
@@ -474,7 +471,7 @@ bool Package::defrag(Callback callback, void* callbackParam)
 	{
 		return false;
 	}
-	_fseeki64(tempFile, sizeof(m_header), SEEK_SET);
+	fseek(tempFile, sizeof(m_header), SEEK_SET);
 
 	vector<char> tempBuffer;
 	u64 nextPos = m_header.headerSize;
@@ -505,7 +502,7 @@ bool Package::defrag(Callback callback, void* callbackParam)
 			if (currentChunkSize > 0)
 			{
 				tempBuffer.resize(currentChunkSize);
-				_fseeki64(m_stream, currentChunkPos, SEEK_SET);
+				fseek(m_stream, currentChunkPos, SEEK_SET);
 				fread(&tempBuffer[0], currentChunkSize, 1, m_stream);
 				fwrite(&tempBuffer[0], currentChunkSize, 1, tempFile);
 			}
@@ -521,7 +518,7 @@ bool Package::defrag(Callback callback, void* callbackParam)
 	if (currentChunkSize > 0)
 	{
 		tempBuffer.resize(currentChunkSize);
-		_fseeki64(m_stream, currentChunkPos, SEEK_SET);
+		fseek(m_stream, currentChunkPos, SEEK_SET);
 		fread(&tempBuffer[0], currentChunkSize, 1, m_stream);
 		fwrite(&tempBuffer[0], currentChunkSize, 1, tempFile);
 	}
@@ -534,7 +531,7 @@ bool Package::defrag(Callback callback, void* callbackParam)
 
 	//write file entries, filenames and header
 	writeTables(false);
-	_fseeki64(m_stream, 0, SEEK_SET);
+	fseek(m_stream, 0, SEEK_SET);
 	fwrite(&m_header, sizeof(m_header), 1, m_stream);
 	fflush(m_stream);
 
@@ -595,13 +592,13 @@ bool Package::readFileUserData(const Char* filename, u8* data, u32 dataLen)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 bool Package::readHeader()
 {
-	_fseeki64(m_stream, 0, SEEK_END);
-	u64 packageSize = _ftelli64(m_stream);
+	fseek(m_stream, 0, SEEK_END);
+	u64 packageSize = ftell(m_stream);
 	if (packageSize < sizeof(PackageHeader))
 	{
 		return false;
 	}
-	_fseeki64(m_stream, 0, SEEK_SET);
+	fseek(m_stream, 0, SEEK_SET);
 	fread(&m_header, sizeof(PackageHeader), 1, m_stream);
 	if (m_header.sign != PACKAGE_FILE_SIGN
 		|| m_header.headerSize != sizeof(PackageHeader)
@@ -637,7 +634,7 @@ bool Package::readFileEntries()
 	{
 		return true;
 	}
-	_fseeki64(m_stream, m_header.fileEntryOffset, SEEK_SET);
+	fseek(m_stream, m_header.fileEntryOffset, SEEK_SET);
 	if (m_header.allFileEntrySize == m_header.fileCount * m_header.fileEntrySize)
 	{
 		//not compressed
@@ -668,7 +665,7 @@ bool Package::readFilenames()
 	{
 		return false;
 	}
-	_fseeki64(m_stream, m_header.filenameOffset, SEEK_SET);
+	fseek(m_stream, m_header.filenameOffset, SEEK_SET);
 	vector<u8> dstBuffer(m_header.originFilenamesSize);
 	if (m_header.allFilenameSize == m_header.originFilenamesSize)
 	{
@@ -797,7 +794,7 @@ void Package::writeTables(bool avoidOverwrite)
 	}
 
 	//write
-	_fseeki64(m_stream, m_header.fileEntryOffset, SEEK_SET);
+	fseek(m_stream, m_header.fileEntryOffset, SEEK_SET);
 	if (dstEntrySize == srcEntrySize)
 	{
 		fwrite(&m_fileEntries[0], srcEntrySize, 1, m_stream);
@@ -915,7 +912,12 @@ u32 Package::insertFileEntry(FileEntry& entry, const Char* filename)
 		{
 			entry.byteOffset = lastEnd;
 			m_fileEntries.insert(m_fileEntries.begin() + fileIndex * m_header.fileEntrySize, m_header.fileEntrySize, 0);
-			thisEntry = entry;
+			
+			// fix: modify for fix CRASH : if m_fileEntries realloc then thisEntry will be freeed
+			// thisEntry = entry;
+			getFileEntry(fileIndex) = entry; 
+			// ###############################
+
 			m_filenames.insert(m_filenames.begin() + fileIndex, filename);
 			assert(m_filenames.size() == getFileCount());
 			//user may call addFile or removeFile before calling flush, so hash table need to be fixed
@@ -1015,7 +1017,7 @@ void Package::fixHashTable(u32 index)
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 void Package::writeRawFile(FileEntry& entry, FILE* file)
 {
-	_fseeki64(m_stream, entry.byteOffset, SEEK_SET);
+	fseek(m_stream, entry.byteOffset, SEEK_SET);
 
 	u32 chunkCount = (entry.originSize + m_header.chunkSize - 1) / m_header.chunkSize;
 	m_chunkData.resize(m_header.chunkSize);

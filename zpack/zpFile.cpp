@@ -1,3 +1,4 @@
+
 #include "zpFile.h"
 #include "zpPackage.h"
 #include <cassert>
@@ -70,7 +71,6 @@ u32 File::tell() const
 u32 File::read(u8* buffer, u32 size)
 {
 	PACKAGE_LOCK;
-
 	//not preventing user from reading over available size here
 	if (m_readPos + size > m_size)
 	{
@@ -92,7 +92,7 @@ u32 File::read(u8* buffer, u32 size)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void File::seekInPackage()
 {
-	_fseeki64(m_package->m_stream, m_offset + m_readPos, SEEK_SET);
+	fseek(m_package->m_stream, m_offset + m_readPos, SEEK_SET);
 	m_package->m_lastSeekFile = this;
 }
 

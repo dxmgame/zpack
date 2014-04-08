@@ -1,6 +1,6 @@
 #include "zpack.h"
 #include "WriteCompressFile.h"
-#include "zlib.h"
+#include "zpack/zlib/zlib.h"
 
 namespace zp
 {
@@ -10,7 +10,7 @@ namespace zp
 u32 writeCompressFile(FILE* dstFile, u64 offset, FILE* srcFile, u32 srcFileSize, u32 chunkSize, u32& flag,
 						std::vector<u8>& chunkData,	std::vector<u8>& compressBuffer, std::vector<u32>& chunkPosBuffer)
 {
-	_fseeki64(dstFile, offset, SEEK_SET);
+	fseek(dstFile, offset, SEEK_SET);
 
 	u32 chunkCount = (srcFileSize + chunkSize - 1) / chunkSize;
 	chunkPosBuffer.resize(chunkCount);
@@ -59,7 +59,7 @@ u32 writeCompressFile(FILE* dstFile, u64 offset, FILE* srcFile, u32 srcFileSize,
 	if (chunkCount > 1)
 	{
 		packSize += chunkCount * sizeof(u32);
-		_fseeki64(dstFile, offset, SEEK_SET);
+		fseek(dstFile, offset, SEEK_SET);
 		fwrite(&chunkPosBuffer[0], chunkCount * sizeof(u32), 1, dstFile);
 	}
 	else if (packSize == srcFileSize)
