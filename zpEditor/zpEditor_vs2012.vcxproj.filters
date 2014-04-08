@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="zp">
+      <UniqueIdentifier>{718846e0-a3e7-4ca3-b7c3-2da7509146ff}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="UserImages.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\zpEditor.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\zpEditorDoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\zpEditor.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar256.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ImageLeft.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LeftView.h" />
+    <ClInclude Include="zpEditorView.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="zpEditor.h" />
+    <ClInclude Include="zpEditorDoc.h" />
+    <ClInclude Include="..\zpCmd\zpExplorer.h">
+      <Filter>zp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\zpCmd\fileEnum.h">
+      <Filter>zp</Filter>
+    </ClInclude>
+    <ClInclude Include="FolderDialog.h" />
+    <ClInclude Include="ProgressDialog.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LeftView.cpp" />
+    <ClCompile Include="zpEditorView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="zpEditor.cpp" />
+    <ClCompile Include="zpEditorDoc.cpp" />
+    <ClCompile Include="..\zpCmd\zpExplorer.cpp">
+      <Filter>zp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\zpCmd\fileEnum.cpp">
+      <Filter>zp</Filter>
+    </ClCompile>
+    <ClCompile Include="FolderDialog.cpp" />
+    <ClCompile Include="ProgressDialog.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="zpEditor.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

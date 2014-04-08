@@ -3,7 +3,7 @@
 #include "zpCompressedFile.h"
 #include "zpWriteFile.h"
 #include "WriteCompressFile.h"
-#include "zpack/zlib/zlib.h"
+#include "zlib.h"
 #include <cassert>
 #include <sstream>
 
@@ -1029,7 +1029,10 @@ void Package::writeRawFile(FileEntry& entry, FILE* file)
 			curChunkSize = entry.originSize % m_header.chunkSize;
 		}
 		fread(&m_chunkData[0], curChunkSize, 1, file);
-		fwrite(&m_chunkData[0], curChunkSize, 1, file);
+		
+		// FIX: –¥»ÎŒª÷√¥ÌŒÛ¡À;
+		// fwrite(&m_chunkData[0], curChunkSize, 1, file);
+		fwrite(&m_chunkData[0], curChunkSize, 1, m_stream);
 	}
 }
 

@@ -1,6 +1,6 @@
 #include "zpack.h"
 #include "WriteCompressFile.h"
-#include "zpack/zlib/zlib.h"
+#include "zlib.h"
 
 namespace zp
 {

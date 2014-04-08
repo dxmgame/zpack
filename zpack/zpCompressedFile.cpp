@@ -1,7 +1,7 @@
 #include "zpCompressedFile.h"
 #include "zpPackage.h"
 #include <cassert>
-#include "zpack/zlib/zlib.h"
+#include "zlib.h"
 //#include "PerfUtil.h"
 
 namespace zp

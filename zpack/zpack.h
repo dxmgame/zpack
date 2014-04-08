@@ -3,9 +3,9 @@
 
 #include <string>
 
-#if defined (_MSC_VER) && defined (UNICODE)
-	#define ZP_USE_WCHAR
-#endif
+// #if defined (_MSC_VER) && defined (UNICODE)
+// 	#define ZP_USE_WCHAR
+// #endif
 
 //#if defined (_MSC_VER)
 #define ZP_CASE_SENSITIVE	0
