@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zpack", "zpack-vs2005.vcproj", "{0566CBD4-94CB-43CC-9233-A07A63455E62}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zpCmd", "..\zpCmd\zpCmd-vs2005.vcproj", "{79ABFEDD-5F1D-4CF3-9156-8AE0B7586DB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0566CBD4-94CB-43CC-9233-A07A63455E62} = {0566CBD4-94CB-43CC-9233-A07A63455E62}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0566CBD4-94CB-43CC-9233-A07A63455E62}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0566CBD4-94CB-43CC-9233-A07A63455E62}.Debug|Win32.Build.0 = Debug|Win32
+		{0566CBD4-94CB-43CC-9233-A07A63455E62}.Release|Win32.ActiveCfg = Release|Win32
+		{0566CBD4-94CB-43CC-9233-A07A63455E62}.Release|Win32.Build.0 = Release|Win32
+		{79ABFEDD-5F1D-4CF3-9156-8AE0B7586DB5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{79ABFEDD-5F1D-4CF3-9156-8AE0B7586DB5}.Debug|Win32.Build.0 = Debug|Win32
+		{79ABFEDD-5F1D-4CF3-9156-8AE0B7586DB5}.Release|Win32.ActiveCfg = Release|Win32
+		{79ABFEDD-5F1D-4CF3-9156-8AE0B7586DB5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
